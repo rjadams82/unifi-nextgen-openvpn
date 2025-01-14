@@ -28,11 +28,12 @@ if [[ $EUID -ne 0 ]]; then
   exit 1
 fi
 echo ""
-read -n 1 -s -r -p "Please READ CAREFULLY then press any key to continue... OR CTRL+C to EXIT NOW..."
+read -n 1 -s -r -p "Please READ CAREFULLY then press any key to continue... OR CTRL+C to EXIT NOW...";
+
 echo ""
 echo ""
 # setup variables
-homedir='$HOME'
+homedir=$HOME
 stagedir="$homedir/ovpn-ptp-fix/"
 installdir='/data/custom/ovpn-ptp-fix/'
 giturl='https://github.com/rjadams82/unifi-nextgen-openvpn/'
@@ -43,7 +44,7 @@ fcron='/etc/cron.d/ovpn-ptp-fix'
 
 echo "Default installation directory: $installdir"
 echo "To complete installation of 'ovpn-ptp-fix' ";
-read -n 1 -s -r -p "Press any key to continue... OR CTRL+C to EXIT NOW..."
+read -n 1 -s -r -p "Press any key to continue... OR CTRL+C to EXIT NOW...";
 echo ""
 set -e; # safe exit on any failure
 
