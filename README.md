@@ -14,6 +14,6 @@ upload the script to the device "/root/ovpn-ptp-fix.sh" using SCP or other tool
 make executable and run the script
 ```
 cd /root/
-chmod 755 ovpn.ptp.sh
+chmod 755 ovpn-ptp-fix.sh
 ./ovpn-ptp-fix.sh
 ```
