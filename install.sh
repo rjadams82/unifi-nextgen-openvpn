@@ -61,14 +61,14 @@ mkdir -p $stagedir
 # where we will put our production custom fix
 mkdir -p $installdir
 
-# pull down asset files
-#curl $giturl/$fscript > "$installdir/$fscript"
+# pull down asset to staging
 curl -L $giturl/$fscriptsrc > "$stagedir/$fscriptdst"
 
 # move to install dir
-#cp "$stagedir/$fscriptdst" "$installdir/$fscriptdst"
+cp "$stagedir/$fscriptdst" "$installdir/$fscriptdst"
+
 # make executable
-#chmod 755 "$installdir/$fscriptdst"
+chmod 755 "$installdir/$fscriptdst"
 
 # add cron entry to run this at regular intervals
 cronadd="
