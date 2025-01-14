@@ -39,7 +39,7 @@ echo ""
 homedir=$HOME
 stagedir="$homedir/ovpn-ptp-fix/"
 installdir='/data/custom/ovpn-ptp-fix/'
-giturl='https://raw.githubusercontent.com/rjadams82/unifi-nextgen-openvpn/main/'
+giturl='https://raw.githubusercontent.com/rjadams82/unifi-nextgen-openvpn/dev/'
 #fscriptsrc='ovpn-ptp-fix.sh'
 fscriptsrc='ovpn-ptp-fix.sh'
 fscriptdst='ovpn-ptp-fix.sh'
