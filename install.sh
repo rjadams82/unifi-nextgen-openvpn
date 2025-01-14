@@ -75,7 +75,7 @@ cronadd="
 # cron task for ovpn-ptp-fix script located in $installdir
 # task run ovpn-ptp-fix.sh every 5 minutes to check for dynamic openvpn ptp configurations
 #
-5 * * * * root command -v $installdir/$fscriptdst > /dev/null 1 1
+*/5 * * * * root command -v $installdir/$fscriptdst > /dev/null 1 1
 "
 echo "$cronadd" > $fcron
 
