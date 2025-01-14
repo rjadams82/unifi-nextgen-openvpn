@@ -6,4 +6,6 @@ Currently testing
 
 
 -run the installer from this repo
-<curl -L https://raw.githubusercontent.com/rjadams82/unifi-nextgen-openvpn/main/install.sh | bash>
+```
+curl -L https://raw.githubusercontent.com/rjadams82/unifi-nextgen-openvpn/main/install.sh | bash
+```
