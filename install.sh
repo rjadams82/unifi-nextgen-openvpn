@@ -55,7 +55,7 @@ echo ""
 #cd "$homedir"
 
 # temp staging needed?
-#mkdir -p $stagedir
+mkdir -p $stagedir
 
 # where we will put our production custom fix
 mkdir -p $installdir
