@@ -1,0 +1,88 @@
+#!/bin/bash
+#
+# installer script for UXG platform dynamic openvpn ptp fix
+# 2025-01-14 github.com/rjadams82/unifi-nextgen-openvpn
+#
+# USE AT YOUR OWN RISK
+# this is a custom script - provided freely and openly for
+# testing purposes only! consider it untested and unsupported!
+# you obviously run the risk of damage to your hardware or software
+# and should not run this script without understanding the risk.
+#
+# Disclaimer
+echo "";
+echo "";
+echo "*************************************************************************"
+echo "* IMPORTANT: This custom script is provided AS IS without any warranty. *"
+echo "* This script should be considered for testing purposes only and you    *"
+echo "* should consider it untested and unsupported! Use at your own risk!    *"
+echo "* There is a chance you will damage your hardware and software! The     *"
+echo "* author is not responsible for any damage or data loss that may occur! *"
+echo "*************************************************************************"
+echo ""
+echo "Unifi Next Generation Gateway openvpn ptp dynamic client fix"
+echo "github.com/rjadams82/unifi-nextgen-openvpn"
+echo ""
+if [[ $EUID -ne 0 ]]; then
+  echo "Error: This script requires root privileges. Please run with sudo."
+  exit 1
+fi
+echo ""
+read -n 1 -s -r -p "Please READ CAREFULLY then press any key to continue... OR CTRL+C to EXIT NOW..."
+echo ""
+echo ""
+# setup variables
+homedir='$HOME'
+stagedir="$homedir/ovpn-ptp-fix/"
+installdir='/data/custom/ovpn-ptp-fix/'
+giturl='https://github.com/rjadams82/unifi-nextgen-openvpn/'
+#fscriptsrc='ovpn-ptp-fix.sh'
+fscriptsrc='test.sh'
+fscriptdst='ovpn-ptp-fix.sh'
+fcron='/etc/cron.d/ovpn-ptp-fix'
+
+echo "Default installation directory: $installdir"
+echo "To complete installation of 'ovpn-ptp-fix' ";
+read -n 1 -s -r -p "Press any key to continue... OR CTRL+C to EXIT NOW..."
+echo ""
+set -e; # safe exit on any failure
+
+cd "$homedir"
+
+# temp staging needed?
+mkdir -p $stagedir
+
+# where we will put our production custom fix
+#mkdir -p $installdir
+
+# pull down asset files
+#curl $giturl/$fscript > "$installdir/$fscript"
+curl $giturl/$fscript > "$stagedir/$fscriptsrc"
+
+# make executable
+#chmod 755 "$installdir/$fscript"
+
+# add cron entry to run this at regular intervals
+cronadd="
+# cron task for ovpn-ptp-fix script located in $installdir
+# task run ovpn-ptp-fix.sh every 5 minutes to check for dynamic openvpn ptp configurations
+#
+5 * * * * root command -v $installdir/$fscriptdst > /dev/null 1 1
+"
+echo "$cronadd" > $fcron
+
+
+# Post-installation message
+echo ""
+echo "script nstallation complete!"
+echo ""
+echo "ovpn-ptp-fix script has been installed in $installdir"
+echo "fix has been added to cron and will run at 5 minute intervals"
+echo "you can also run it manually using: '$installdir/$fscript'"
+echo ""
+echo "to review script results check syslog with 'journalctl -t ovpn-ptp-fix'"
+echo ""
+echo "please refer to documentation for any other information."
+echo "github.com/rjadams82/unifi-nextgen-openvpn"
+echo ""
+exit 0
