@@ -11,6 +11,7 @@
 # and should not run this script without understanding the risk.
 #
 set -e; # safe exit on any failure
+clear -x
 # Disclaimer
 echo "";
 echo "";
