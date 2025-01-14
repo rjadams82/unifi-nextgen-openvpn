@@ -4,14 +4,14 @@
 #
 # search/update any site-to-site configs containig remote IP 0.0.0.0
 # add the float directive to allow dynamic/CGNAT remote devices
-# and disable (comment) the --remote directive to allow the float
+# and disable the --remote directive to allow the float
 # 
 # openvpn site-to-site configs are stored here in our system - you should verify your location:
 # /etc/openvpn/openvpn-peer-x/peer.config.x
 #
 # configure variables
 logtag='ovpn-ptp-fix'                   # tag to prepend in syslog entry for easy searching - "journalctl -t ovpn-ptp-fix"
-cfgdir='/etc/openvpn/openvpn-peer-*/'   # root directories for config files
+cfgdir='/etc/openvpn/openvpn-peer-*/'   # root directory for config files
 cfgexp='peer.config.*'                  # config file pattern to match
 #cfgdir='/home/'                        # testing
 #cfgexp='test.config'                   # testing
@@ -20,10 +20,10 @@ cfgexp='peer.config.*'                  # config file pattern to match
 
 for file in $cfgdir$cfgexp; do
     # found the file(s)
-    scount=0 # count the actions taken
-    odir="$(dirname $file)" # get config directory
-    opid=$(<${odir}/peer.pid) # get the current pid
-    lstr=" $odir pid[$opid] " # build our log string
+    scount=0
+    odir="$(dirname $file)"
+    opid=$(<${odir}/peer.pid)
+    lstr=" $odir $opid "
     # check for remote 0.0.0.0
     if grep -q "remote 0.0.0.0" $file; then  
         # ok we have a qualifying peer config with bogus remote IP (dynamic client)        
@@ -32,18 +32,18 @@ for file in $cfgdir$cfgexp; do
             # add the --float option for dynamic peer
             echo '--float' >> $file
             ((scount++))
-            lstr=${lstr}' | add --float '
+            lstr=${lstr}' add --float | '
         else
             # float already there
             :
         fi
 
-        # check if --remote directve active
+        # check for --remote directve still active
         if ! grep -q -- "#--remote 0.0.0.0" $file; then
             # no commented --remote directive, we must comment it out
             sed -i -e "s/--remote 0.0.0.0/#--remote 0.0.0.0/g" $file
             ((scount++))
-            lstr=${lstr}' | comment --remote ' 
+            lstr=${lstr}' comment --remote | ' 
         else
             # remote already commented
             :
@@ -51,16 +51,16 @@ for file in $cfgdir$cfgexp; do
 
         # check for script actions
         if [ $scount -gt 0 ]; then
-            # we made changes, kill the site connection by pid and let the watchdog restart
+            # we made changes, grab the pid and kill the site connection
             #pkill $opid            
             lstr=${lstr}" kill $opid "
         else
             # no actions taken in script
-            lstr=${lstr}' | dynamic peer found, config OK, no action taken '            
+            lstr=${lstr}' dynamic peer config OK, no action taken '            
         fi
     else
         # no peer configs with remote 0.0.0.0 found
-        lstr=${lstr}' | no dynamic peer found '
+        lstr=${lstr}' no dynamic peer found '
     fi
     
     # log results to syslog
