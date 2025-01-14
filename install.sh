@@ -2,6 +2,7 @@
 #
 # installer script for UXG platform dynamic openvpn ptp fix
 # 2025-01-14 github.com/rjadams82/unifi-nextgen-openvpn
+# run this install with "curl -L https://raw.githubusercontent.com/rjadams82/unifi-nextgen-openvpn/main/install.sh | bash"
 #
 # USE AT YOUR OWN RISK
 # this is a custom script - provided freely and openly for
@@ -9,6 +10,7 @@
 # you obviously run the risk of damage to your hardware or software
 # and should not run this script without understanding the risk.
 #
+set -e; # safe exit on any failure
 # Disclaimer
 echo "";
 echo "";
@@ -36,32 +38,36 @@ echo ""
 homedir=$HOME
 stagedir="$homedir/ovpn-ptp-fix/"
 installdir='/data/custom/ovpn-ptp-fix/'
-giturl='https://github.com/rjadams82/unifi-nextgen-openvpn/'
+giturl='https://raw.githubusercontent.com/rjadams82/unifi-nextgen-openvpn/main/'
 #fscriptsrc='ovpn-ptp-fix.sh'
 fscriptsrc='test.sh'
 fscriptdst='ovpn-ptp-fix.sh'
 fcron='/etc/cron.d/ovpn-ptp-fix'
 
+echo ""
 echo "Default installation directory: $installdir"
 echo "To complete installation of 'ovpn-ptp-fix' ";
 read -n 1 -s -r -p "Press any key to continue... OR CTRL+C to EXIT NOW...";
-echo ""
-set -e; # safe exit on any failure
 
-cd "$homedir"
+echo ""
+echo ""
+
+#cd "$homedir"
 
 # temp staging needed?
-mkdir -p $stagedir
+#mkdir -p $stagedir
 
 # where we will put our production custom fix
-#mkdir -p $installdir
+mkdir -p $installdir
 
 # pull down asset files
 #curl $giturl/$fscript > "$installdir/$fscript"
-curl $giturl/$fscript > "$stagedir/$fscriptsrc"
+curl -L $giturl/$fscriptsrc > "$stagedir/$fscriptdst"
 
+# move to install dir
+#cp "$stagedir/$fscriptdst" "$installdir/$fscriptdst"
 # make executable
-#chmod 755 "$installdir/$fscript"
+#chmod 755 "$installdir/$fscriptdst"
 
 # add cron entry to run this at regular intervals
 cronadd="
@@ -72,10 +78,9 @@ cronadd="
 "
 echo "$cronadd" > $fcron
 
-
 # Post-installation message
 echo ""
-echo "script nstallation complete!"
+echo "script installation complete!"
 echo ""
 echo "ovpn-ptp-fix script has been installed in $installdir"
 echo "fix has been added to cron and will run at 5 minute intervals"
