@@ -41,10 +41,10 @@ homedir=$HOME
 stagedir="$homedir/ovpn-ptp-fix/"
 installdir='/data/custom/ovpn-ptp-fix/'
 giturl='https://raw.githubusercontent.com/rjadams82/unifi-nextgen-openvpn/dev/'
-#fscriptsrc='ovpn-ptp-fix.sh'
-fscriptsrc='ovpn-ptp-fix.sh'
-fscriptdst='ovpn-ptp-fix.sh'
-fcron='/etc/cron.d/ovpn-ptp-fix'
+fscriptsrc='ovpn-ptp-fix.sh'    # source script
+fscriptdst='ovpn-ptp-fix.sh'    # destination script
+fcron='/etc/cron.d/ovpn-ptp-fix'    # cron entry
+flog='/var/log/ovpn-ptp-fix.log'    # log file
 
 echo ""
 echo "Default installation directory: $installdir"
