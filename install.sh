@@ -3,6 +3,7 @@
 # installer script for UXG platform dynamic openvpn ptp fix
 # 2025-01-14 github.com/rjadams82/unifi-nextgen-openvpn
 # run this install with "curl -L https://raw.githubusercontent.com/rjadams82/unifi-nextgen-openvpn/main/install.sh | bash"
+# or "bash <(curl --silent https://raw.githubusercontent.com/rjadams82/unifi-nextgen-openvpn/main/install.sh)"
 #
 # USE AT YOUR OWN RISK
 # this is a custom script - provided freely and openly for
@@ -74,7 +75,7 @@ chmod 755 "$installdir/$fscriptdst"
 cronadd="# cron task for ovpn-ptp-fix script located in $installdir
 # task run ovpn-ptp-fix.sh every 5 minutes to check for dynamic openvpn ptp configurations
 #
-*/5 * * * * root $installdir/$fscriptdst
+*/5 * * * * root /bin/bash $installdir$fscriptdst >> /var/log/ovpn-ptp-fix.log
 "
 echo "$cronadd" > $fcron
 
