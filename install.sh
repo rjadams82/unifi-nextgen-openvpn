@@ -74,7 +74,7 @@ chmod 755 "$installdir/$fscriptdst"
 # add cron entry to run this at regular intervals
 cronadd="# cron task for ovpn-ptp-fix script located in $installdir
 # run ovpn-ptp-fix.sh every 5 minutes to check for dynamic openvpn ptp configurations
-*/5 * * * * root /bin/bash $installdir$fscriptdst >> /var/log/ovpn-ptp-fix.log
+*/5 * * * * root $installdir$fscriptdst >> /var/log/ovpn-ptp-fix.log 2>&1
 "
 echo "$cronadd" > $fcron
 
