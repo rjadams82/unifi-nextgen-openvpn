@@ -56,7 +56,7 @@ for file in $cfgdir$cfgexp; do
         # check for script actions
         if [ $scount -gt 0 ]; then
             # we made changes, grab the active pid and kill the peer connection process
-            if [[ "$opid" != "[stoped]" ]]; then            
+            if [[ "$opid" != "[stopped]" ]]; then            
                 pkill $opid
                 lstr=${lstr}" | kill $opid "
             fi
