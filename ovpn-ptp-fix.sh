@@ -23,7 +23,11 @@ for file in $cfgdir$cfgexp; do
     scount=0
     odir="$(dirname $file)"
     opid=$(<${odir}/peer.pid)
-    lstr=" $odir $opid "
+    if [ -z "$opid" ]; then
+        # no pid assigned so peer is not running
+        opid="[stopped]"
+    fi
+    lstr=" $odir pid:$opid "
     # check for remote 0.0.0.0
     if grep -q "remote 0.0.0.0" $file; then  
         # ok we have a qualifying peer config with bogus remote IP (dynamic client)        
@@ -32,7 +36,7 @@ for file in $cfgdir$cfgexp; do
             # add the --float option for dynamic peer
             echo '--float' >> $file
             ((scount++))
-            lstr=${lstr}' add --float | '
+            lstr=${lstr}' | add --float '
         else
             # float already there
             :
@@ -43,7 +47,7 @@ for file in $cfgdir$cfgexp; do
             # no commented --remote directive, we must comment it out
             sed -i -e "s/--remote 0.0.0.0/#--remote 0.0.0.0/g" $file
             ((scount++))
-            lstr=${lstr}' comment --remote | ' 
+            lstr=${lstr}' | comment --remote ' 
         else
             # remote already commented
             :
@@ -51,9 +55,11 @@ for file in $cfgdir$cfgexp; do
 
         # check for script actions
         if [ $scount -gt 0 ]; then
-            # we made changes, grab the pid and kill the site connection
-            #pkill $opid            
-            lstr=${lstr}" kill $opid "
+            # we made changes, grab the active pid and kill the peer connection process
+            if [[ "$opid" != "[stopped]" ]]; then            
+                pkill $opid
+                lstr=${lstr}" | kill $opid "
+            fi
         else
             # no actions taken in script
             lstr=${lstr}' dynamic peer config OK, no action taken '            

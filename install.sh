@@ -3,6 +3,7 @@
 # installer script for UXG platform dynamic openvpn ptp fix
 # 2025-01-14 github.com/rjadams82/unifi-nextgen-openvpn
 # run this install with "curl -L https://raw.githubusercontent.com/rjadams82/unifi-nextgen-openvpn/main/install.sh | bash"
+# or "bash <(curl --silent https://raw.githubusercontent.com/rjadams82/unifi-nextgen-openvpn/main/install.sh)"
 #
 # USE AT YOUR OWN RISK
 # this is a custom script - provided freely and openly for
@@ -39,11 +40,11 @@ echo ""
 homedir=$HOME
 stagedir="$homedir/ovpn-ptp-fix/"
 installdir='/data/custom/ovpn-ptp-fix/'
-giturl='https://raw.githubusercontent.com/rjadams82/unifi-nextgen-openvpn/main/'
-#fscriptsrc='ovpn-ptp-fix.sh'
-fscriptsrc='ovpn-ptp-fix.sh'
-fscriptdst='ovpn-ptp-fix.sh'
-fcron='/etc/cron.d/ovpn-ptp-fix'
+giturl='https://raw.githubusercontent.com/rjadams82/unifi-nextgen-openvpn/dev/'
+fscriptsrc='ovpn-ptp-fix.sh'    # source script
+fscriptdst='ovpn-ptp-fix.sh'    # destination script
+fcron='/etc/cron.d/ovpn-ptp-fix'    # cron entry
+flog='/var/log/ovpn-ptp-fix.log'    # log file
 
 echo ""
 echo "Default installation directory: $installdir"
@@ -71,11 +72,9 @@ cp "$stagedir/$fscriptdst" "$installdir/$fscriptdst"
 chmod 755 "$installdir/$fscriptdst"
 
 # add cron entry to run this at regular intervals
-cronadd="
-# cron task for ovpn-ptp-fix script located in $installdir
-# task run ovpn-ptp-fix.sh every 5 minutes to check for dynamic openvpn ptp configurations
-#
-*/5 * * * * root command -v $installdir/$fscriptdst > /dev/null 1 1
+cronadd="# cron task for ovpn-ptp-fix script located in $installdir
+# run ovpn-ptp-fix.sh every 5 minutes to check for dynamic openvpn ptp configurations
+*/5 * * * * root $installdir$fscriptdst >> /var/log/ovpn-ptp-fix.log 2>&1
 "
 echo "$cronadd" > $fcron
 
@@ -85,7 +84,7 @@ echo "script installation complete!"
 echo ""
 echo "ovpn-ptp-fix script has been installed in $installdir"
 echo "fix has been added to cron and will run at 5 minute intervals"
-echo "you can also run it manually using: '$installdir/$fscript'"
+echo "you can also run it manually using: '$installdir/$fscriptdst'"
 echo ""
 echo "to review script results check syslog with 'journalctl -t ovpn-ptp-fix'"
 echo ""
