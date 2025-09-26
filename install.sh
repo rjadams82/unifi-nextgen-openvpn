@@ -43,7 +43,7 @@ installdir='/data/custom/ovpn-ptp-fix/'
 giturl='https://raw.githubusercontent.com/rjadams82/unifi-nextgen-openvpn/dev/'
 fscriptsrc='ovpn-ptp-fix.sh'    # source script
 fscriptdst='ovpn-ptp-fix.sh'    # destination script
-fcron='/etc/cron.d/ovpn-ptp-fix'    # cron entry
+fcron='/etc/cron.hourly/ovpn-ptp-fix'    # cron entry
 flog='/var/log/ovpn-ptp-fix.log'    # log file
 flogrotate='/etc/logrotate.d/ovpn-ptp-fix'  # log file rotate conf
 
@@ -73,9 +73,10 @@ cp "$stagedir/$fscriptdst" "$installdir/$fscriptdst"
 chmod 755 "$installdir/$fscriptdst"
 
 # add cron entry to run this at regular intervals
-cronadd="# cron task for ovpn-ptp-fix script located in $installdir
-# run ovpn-ptp-fix.sh every 5 minutes to check for dynamic openvpn ptp configurations
-*/5 * * * * root $installdir$fscriptdst >> /var/log/ovpn-ptp-fix.log 2>&1
+cronadd="#!/bin/sh
+echo "$(date) cron.hourly called ovpn-ptp-fix" >> /var/log/ovpn-ptp-fix.log 2>&1
+/data/custom/ovpn-ptp-fix/ovpn-ptp-fix.sh >> /var/log/ovpn-ptp-fix.log 2>&1
+
 "
 echo "$cronadd" > $fcron
 
