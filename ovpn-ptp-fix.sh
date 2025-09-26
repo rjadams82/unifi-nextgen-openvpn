@@ -20,7 +20,7 @@ cfgexp='peer.config.*'                  # config file pattern to match
 /usr/bin/logger -t "$logtag" -p 6 -- 'start script'
 if [ $(ls -1 $cfgdir$cfgexp | wc -l) -gt 0 ]; then
     # found the file(s)
-    for file in $cfgdir$cfgexp; do        
+    for file in $cfgdir$cfgexp; do
         scount=0
         odir="$(dirname $file)"
         opid=$(<${odir}/peer.pid)
@@ -67,7 +67,7 @@ if [ $(ls -1 $cfgdir$cfgexp | wc -l) -gt 0 ]; then
             fi
         else
             # no peer configs with remote 0.0.0.0 found
-            lstr=${lstr}' no dynamic peer found '
+            lstr=${lstr}' no dynamic 0.0.0.0 peer found '
         fi
         
         # log results to syslog
