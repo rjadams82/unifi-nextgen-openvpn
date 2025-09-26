@@ -72,9 +72,9 @@ for file in $cfgdir$cfgexp; do
     # log results to syslog
     if  [ $scount -gt 0 ]; then
         # log notice because action taken
-        /usr/bin/logger -t $logtag -p 5 -- $lstr
+        /usr/bin/logger -t "$logtag" -p 5 -- "$lstr"
     else
         # log info because no action taken
-        /usr/bin/logger -t $logtag -p 6 -- $lstr
+        /usr/bin/logger -t "$logtag" -p 6 -- "$lstr"
     fi    
 done
