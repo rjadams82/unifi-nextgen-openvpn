@@ -9,28 +9,30 @@ However OpenVPN *does* allow remote VPN endpoints with dynamic IP addresses (--f
 
 This is useful for remote endpoints such as 5G/LTE modems or routing devices connected behind a dynamic broadband internet connection, and you either dont know the true public internet IP or the public IP changes frequently.
 
-*Note: At the very least (for any VPN connection in general) the Unifi Gateway will need either a static internet IP, or you should be using DDNS to have a reliable way for your remote endpoint to connect to the Unifi Gateway.*
+*Note: At the very least (for any VPN connection in general) the Unifi Gateway itself will need either a static internet IP, or you should be using DDNS to have a reliable way for your remote endpoint to connect to the Unifi Gateway.*
 
-### How it works
-1. First we setup our OpenVPN site-to-site VPN connection in Unifi. Since the remote endpoint may be behind CGNAT (LTE modem) or might have a DHCP WAN address, we will enter 0.0.0.0 as the "Remote IP Address".
-2. Next we run a task every 5 minutes to look at the configured site-to-site connections; if they have a Remote IP Address of "0.0.0.0" we add the --float option and comment out the --remote option.
-3. Then for any site-to-site config that we have modified, we grab the PID and kill the process, which then automatically restarts with the modified config.
-4. Finally we log any actions to to syslog. You can search for the log entries using "journalctl -t ovpn-ptp-fix".
+### How the fix works
+1. First you would setup OpenVPN site-to-site VPN connection(s) in Unifi Application. (Since the remote endpoint may be behind CGNAT (LTE modem) or might have a DHCP WAN address, you would enter 0.0.0.0 as the "Remote IP Address".)
+2. Next a task runs (calling the fix script) at regular intervals (using cron) to parse the configured site-to-site connections; if they have a Remote IP Address of "0.0.0.0" the fix adds the --float option and comments out the --remote option.
+3. Then for any site-to-site config the fix has modified, it grabs the PID and kills the process, which automatically restarts (watchdog) with the updated config (--float #--remote).
+4. Finally the fix will log any actions to syslog. You can search for these log entries using "journalctl -t ovpn-ptp-fix".
 
-## run the installer from this repo
+## Install the fix by running the installer from this repo
 *installer is under development. run at your own risk.*
-To install the fix right away you can use the install.sh script directly.
 
-script will be installed in /data/custom/
+To install the fix you can use the install.sh script directly in the shell.
+
+The fix script will be automatically installed and ran from /data/custom/ - this should not be overwritten during Unifi software upgrades:
 ```
 curl -L https://raw.githubusercontent.com/rjadams82/unifi-nextgen-openvpn/main/install.sh | bash
 ```
 
-## just run the fix script manually (for testing)
-if you want to test the script without installing, or need to debug changes or tweaks, use this option.
+## Run the fix script manually (for testing)
+if you just want to test the fix script without installing, or need to debug, use this option.
 
-upload script to the device in "/root/ovpn-ptp-fix.sh" using SCP or other tool
-make executable and run the script
+upload the fix script to the device somewhere like "/root/ovpn-ptp-fix.sh" using SCP or other file transfer tool
+
+make the script executable then run the script
 ```
 cd /root/
 chmod 755 ovpn-ptp-fix.sh
