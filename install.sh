@@ -96,6 +96,9 @@ logrotate="/var/log/ovpn-ptp-fix.log {
 "
 echo "$logrotate" > $flogrotate
 
+# restart cron now?
+systemctl restart cron
+
 # Post-installation message
 echo ""
 echo "script installation complete!"
