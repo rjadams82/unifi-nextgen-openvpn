@@ -17,64 +17,70 @@ cfgexp='peer.config.*'                  # config file pattern to match
 #cfgexp='test.config'                   # testing
 #
 # NO MORE EDITS BELOW #
-
-for file in $cfgdir$cfgexp; do
-    # found the file(s)
-    scount=0
-    odir="$(dirname $file)"
-    opid=$(<${odir}/peer.pid)
-    if [ -z "$opid" ]; then
-        # no pid assigned so peer is not running
-        opid="[stopped]"
-    fi
-    lstr=" $odir pid:$opid "
-    # check for remote 0.0.0.0
-    if grep -q "remote 0.0.0.0" $file; then  
-        # ok we have a qualifying peer config with bogus remote IP (dynamic client)        
-        # check file for missing float option
-        if ! grep -q -- "--float" $file; then        
-            # add the --float option for dynamic peer
-            echo '--float' >> $file
-            ((scount++))
-            lstr=${lstr}' | add --float '
-        else
-            # float already there
-            :
+/usr/bin/logger -t "$logtag" -p 6 -- 'start script'
+if [ $(ls -1 $cfgdir$cfgexp | wc -l) -gt 0 ]; then
+    for file in $cfgdir$cfgexp; do
+        # found the file(s)
+        scount=0
+        odir="$(dirname $file)"
+        opid=$(<${odir}/peer.pid)
+        if [ -z "$opid" ]; then
+            # no pid assigned so peer is not running
+            opid="[stopped]"
         fi
-
-        # check for --remote directve still active
-        if ! grep -q -- "#--remote 0.0.0.0" $file; then
-            # no commented --remote directive, we must comment it out
-            sed -i -e "s/--remote 0.0.0.0/#--remote 0.0.0.0/g" $file
-            ((scount++))
-            lstr=${lstr}' | comment --remote ' 
-        else
-            # remote already commented
-            :
-        fi
-
-        # check for script actions
-        if [ $scount -gt 0 ]; then
-            # we made changes, grab the active pid and kill the peer connection process
-            if [[ "$opid" != "[stopped]" ]]; then            
-                pkill $opid
-                lstr=${lstr}" | kill $opid "
+        lstr=" $odir pid:$opid "
+        # check for remote 0.0.0.0
+        if grep -q "remote 0.0.0.0" $file; then
+            # ok we have a qualifying peer config with bogus remote IP (dynamic client)
+            # check file for missing float option
+            if ! grep -q -- "--float" $file; then
+                # add the --float option for dynamic peer
+                echo '--float' >> $file
+                ((scount++))
+                lstr=${lstr}' | add --float '
+            else
+                # float already there
+                :
+            fi
+    
+            # check for --remote directve still active
+            if ! grep -q -- "#--remote 0.0.0.0" $file; then
+                # no commented --remote directive, we must comment it out
+                sed -i -e "s/--remote 0.0.0.0/#--remote 0.0.0.0/g" $file
+                ((scount++))
+                lstr=${lstr}' | comment --remote '
+            else
+                # remote already commented
+                :
+            fi
+    
+            # check for script actions
+            if [ $scount -gt 0 ]; then
+                # we made changes, grab the active pid and kill the peer connection process
+                if [[ "$opid" != "[stopped]" ]]; then
+                    pkill $opid
+                    lstr=${lstr}" | kill $opid "
+                fi
+            else
+                # no actions taken in script
+                lstr=${lstr}' dynamic peer config OK, no action taken '
             fi
         else
-            # no actions taken in script
-            lstr=${lstr}' dynamic peer config OK, no action taken '            
+            # no peer configs with remote 0.0.0.0 found
+            lstr=${lstr}' no dynamic peer found '
         fi
-    else
-        # no peer configs with remote 0.0.0.0 found
-        lstr=${lstr}' no dynamic peer found '
-    fi
-    
-    # log results to syslog
-    if  [ $scount -gt 0 ]; then
-        # log notice because action taken
-        /usr/bin/logger -t "$logtag" -p 5 -- "$lstr"
-    else
-        # log info because no action taken
-        /usr/bin/logger -t "$logtag" -p 6 -- "$lstr"
-    fi    
-done
+        
+        # log results to syslog
+        if  [ $scount -gt 0 ]; then
+            # log notice because action taken
+            /usr/bin/logger -t "$logtag" -p 5 -- "$lstr"
+        else
+            # log info because no action taken
+            /usr/bin/logger -t "$logtag" -p 6 -- "$lstr"
+        fi
+    done
+else
+    /usr/bin/logger -t "$logtag" -p 6 -- 'no config files found'
+fi
+/usr/bin/logger -t "$logtag" -p 6 -- 'finish script'
+exit 0
