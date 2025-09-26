@@ -45,6 +45,7 @@ fscriptsrc='ovpn-ptp-fix.sh'    # source script
 fscriptdst='ovpn-ptp-fix.sh'    # destination script
 fcron='/etc/cron.d/ovpn-ptp-fix'    # cron entry
 flog='/var/log/ovpn-ptp-fix.log'    # log file
+flogrotate='/etc/logrotate.d/ovpn-ptp-fix'  # log file rotate conf
 
 echo ""
 echo "Default installation directory: $installdir"
@@ -78,6 +79,19 @@ cronadd="# cron task for ovpn-ptp-fix script located in $installdir
 "
 echo "$cronadd" > $fcron
 
+# add logrotate conf to manage the cron logfile
+logrotate="/var/log/ovpn-ptp-fix.log {
+    rotate 4
+    size 256K
+    missingok
+    notifempty
+    compress
+    delaycompress
+    nocreate
+}
+"
+echo "$logrotate" > $flogrotate
+
 # Post-installation message
 echo ""
 echo "script installation complete!"
@@ -86,6 +100,7 @@ echo "ovpn-ptp-fix script has been installed in $installdir"
 echo "fix has been added to cron and will run at 5 minute intervals"
 echo "you can also run it manually using: '$installdir/$fscriptdst'"
 echo ""
+echo "to see dedicated cron script log check '$flog'"
 echo "to review script results check syslog with 'journalctl -t ovpn-ptp-fix'"
 echo ""
 echo "please refer to documentation for any other information."
