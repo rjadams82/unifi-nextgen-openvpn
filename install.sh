@@ -70,7 +70,7 @@ curl -L $giturl/$fscriptsrc > "$stagedir/$fscriptdst"
 cp "$stagedir/$fscriptdst" "$installdir/$fscriptdst"
 
 # make executable
-chmod 755 "$installdir/$fscriptdst"
+chmod 0755 "$installdir/$fscriptdst"
 
 # add cron entry to run this at regular intervals
 cronadd="#!/bin/sh
@@ -79,6 +79,9 @@ echo \"\$(date) cron.hourly called ovpn-ptp-fix\" >> /var/log/ovpn-ptp-fix.log 2
 
 "
 echo "$cronadd" > $fcron
+
+# make executable
+chmod 0755 $fcron
 
 # add logrotate conf to manage the cron logfile
 logrotate="/var/log/ovpn-ptp-fix.log {
