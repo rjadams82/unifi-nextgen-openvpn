@@ -32,7 +32,7 @@ if [[ $EUID -ne 0 ]]; then
   exit 1
 fi
 echo ""
-read -p "Please READ CAREFULLY then press any key to continue... OR CTRL+C to EXIT NOW..."
+read -p "Please READ CAREFULLY then press any key to continue... OR CTRL+C to EXIT NOW..." < /dev/tty
 
 echo ""
 echo ""
@@ -50,7 +50,7 @@ flogrotate='/etc/logrotate.d/ovpn-ptp-fix'  # log file rotate conf
 echo ""
 echo "Default installation directory: $installdir"
 echo "To complete installation of 'ovpn-ptp-fix' ";
-read -p "Press any key to continue... OR CTRL+C to EXIT NOW..."
+read -p "Press any key to continue... OR CTRL+C to EXIT NOW..." < /dev/tty
 
 echo ""
 echo ""
