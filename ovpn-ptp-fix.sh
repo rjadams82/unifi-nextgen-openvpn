@@ -18,7 +18,7 @@ cfgexp='peer.config.*'                  # config file pattern to match
 #
 # NO MORE EDITS BELOW #
 /usr/bin/logger -t "$logtag" -p 6 -- 'start script'
-if [ $(ls -1 $cfgdir$cfgexp | wc -l) -gt 0 ]; then
+if [ $(ls -1 "$cfgdir"$cfgexp | wc -l) -gt 0 ]; then
     # found the file(s)
     for file in "$cfgdir"$cfgexp; do
         scount=0
