@@ -9,6 +9,15 @@
 # openvpn site-to-site configs are stored here in our system - you should verify your location:
 # /etc/openvpn/openvpn-peer-x/peer.config.x
 #
+# error handling
+set -o errtrace
+handle_error() {
+    echo "FAILED: line $1, exit code $2"
+    exit 1
+}
+
+trap 'handle_error $LINENO $?' ERR
+#
 # configure variables
 logtag='ovpn-ptp-fix'                   # tag to prepend in syslog entry for easy searching - "journalctl -t ovpn-ptp-fix"
 cfgdir='/etc/openvpn/openvpn-peer-*/'   # root directory for config files
