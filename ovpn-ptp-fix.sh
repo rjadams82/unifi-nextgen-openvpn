@@ -20,7 +20,7 @@ cfgexp='peer.config.*'                  # config file pattern to match
 /usr/bin/logger -t "$logtag" -p 6 -- 'start script'
 if [ $(ls -1 $cfgdir$cfgexp | wc -l) -gt 0 ]; then
     # found the file(s)
-    for file in $cfgdir$cfgexp; do
+    for file in "$cfgdir"$cfgexp; do
         scount=0
         odir="$(dirname $file)"
         opid=$(<${odir}/peer.pid)
@@ -30,25 +30,25 @@ if [ $(ls -1 $cfgdir$cfgexp | wc -l) -gt 0 ]; then
         fi
         lstr=" $odir pid:$opid "
         # check for remote 0.0.0.0
-        if grep -q "remote 0.0.0.0" $file; then
+        if grep -q "remote 0.0.0.0" "$file"; then
             # ok we have a qualifying peer config with bogus remote IP (dynamic client)
             # check file for missing float option
-            if ! grep -q -- "--float" $file; then
+            if ! grep -q -- "--float" "$file"; then
                 # add the --float option for dynamic peer
                 echo '--float' >> $file
                 ((scount++))
-                lstr=${lstr}' | add --float '
+                lstr+=' | add --float '
             else
                 # float already there
                 :
             fi
     
             # check for --remote directve still active
-            if ! grep -q -- "#--remote 0.0.0.0" $file; then
+            if ! grep -q -- "#--remote 0.0.0.0" "$file"; then
                 # no commented --remote directive, we must comment it out
-                sed -i -e "s/--remote 0.0.0.0/#--remote 0.0.0.0/g" $file
+                sed -i -e "s/--remote 0.0.0.0/#--remote 0.0.0.0/g" "$file"
                 ((scount++))
-                lstr=${lstr}' | comment --remote '
+                lstr+=' | comment --remote '
             else
                 # remote already commented
                 :
@@ -58,16 +58,16 @@ if [ $(ls -1 $cfgdir$cfgexp | wc -l) -gt 0 ]; then
             if [ $scount -gt 0 ]; then
                 # we made changes, grab the active pid and kill the peer connection process
                 if [[ "$opid" != "[stopped]" ]]; then
-                    pkill $opid
-                    lstr=${lstr}" | kill $opid "
+                    kill "$opid"
+                    lstr+=" | kill $opid "
                 fi
             else
                 # no actions taken in script
-                lstr=${lstr}' dynamic peer config OK, no action taken '
+                lstr+=' dynamic peer config OK, no action taken '
             fi
         else
             # no peer configs with remote 0.0.0.0 found
-            lstr=${lstr}' no dynamic 0.0.0.0 peer found '
+            lstr+=' no dynamic 0.0.0.0 peer found '
         fi
         
         # log results to syslog
