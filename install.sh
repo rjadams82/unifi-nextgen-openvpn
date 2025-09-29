@@ -34,8 +34,6 @@ fi
 echo ""
 read -p "Please READ CAREFULLY then press any key to continue... OR CTRL+C to EXIT NOW..." < /dev/tty
 
-echo ""
-echo ""
 # setup variables
 homedir=$HOME
 stagedir="$homedir/ovpn-ptp-fix/"
@@ -51,8 +49,6 @@ echo ""
 echo "Default installation directory: $installdir"
 echo "To complete installation of 'ovpn-ptp-fix' ";
 read -p "Press any key to continue... OR CTRL+C to EXIT NOW..." < /dev/tty
-
-echo ""
 echo ""
 
 #cd "$homedir"
