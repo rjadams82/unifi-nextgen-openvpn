@@ -23,7 +23,7 @@ if [ $(ls -1 $cfgdir$cfgexp | wc -l) -gt 0 ]; then
     for file in "$cfgdir"$cfgexp; do
         scount=0
         odir="$(dirname $file)"
-        opid=$(<${odir}/peer.pid)
+        opid=$(<"${odir}/peer.pid")
         if [ -z "$opid" ]; then
             # no pid assigned so peer is not running
             opid="[stopped]"
