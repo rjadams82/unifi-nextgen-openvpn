@@ -10,6 +10,7 @@
 # /etc/openvpn/openvpn-peer-x/peer.config.x
 #
 # error handling
+set -x # full xtrace output
 set -o errtrace
 handle_error() {
     echo "FAILED: line $1, exit code $2"
