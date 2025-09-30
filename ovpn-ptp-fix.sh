@@ -73,7 +73,7 @@ if [ $(ls -1 $cfgdir$cfgexp | wc -l) -gt 0 ]; then
                 fi
             else
                 # no actions taken in script
-                lstr='dynamic peer config OK, no action taken'
+                lstr="${lstr} dynamic peer config OK, no action taken"
             fi
         else
             # no peer configs with remote 0.0.0.0 found
