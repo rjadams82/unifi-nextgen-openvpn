@@ -38,7 +38,7 @@ if [ $(ls -1 $cfgdir$cfgexp | wc -l) -gt 0 ]; then
             # no pid assigned so peer is not running
             opid="[stopped]"
         fi
-        lstr=" $odir pid:$opid "
+        lstr="$odir pid:$opid"
         # check for remote 0.0.0.0
         if grep -q "remote 0.0.0.0" "$file"; then
             # ok we have a qualifying peer config with bogus remote IP (dynamic client)
@@ -47,7 +47,7 @@ if [ $(ls -1 $cfgdir$cfgexp | wc -l) -gt 0 ]; then
                 # add the --float option for dynamic peer
                 echo '--float' >> $file
                 ((scount++))
-                lstr+=' | add --float '
+                lstr="${lstr} | add --float"
             else
                 # float already there
                 :
@@ -58,7 +58,7 @@ if [ $(ls -1 $cfgdir$cfgexp | wc -l) -gt 0 ]; then
                 # no commented --remote directive, we must comment it out
                 sed -i -e "s/--remote 0.0.0.0/#--remote 0.0.0.0/g" "$file"
                 ((scount++))
-                lstr+=' | comment --remote '
+                lstr="${lstr} | comment --remote"
             else
                 # remote already commented
                 :
@@ -69,15 +69,15 @@ if [ $(ls -1 $cfgdir$cfgexp | wc -l) -gt 0 ]; then
                 # we made changes, grab the active pid and kill the peer connection process
                 if [[ "$opid" != "[stopped]" ]]; then
                     kill "$opid"
-                    lstr+=" | kill $opid "
+                    lstr="${lstr} | kill $opid"
                 fi
             else
                 # no actions taken in script
-                lstr+=' dynamic peer config OK, no action taken '
+                lstr='dynamic peer config OK, no action taken'
             fi
         else
             # no peer configs with remote 0.0.0.0 found
-            lstr+=' no dynamic 0.0.0.0 peer found '
+            lstr="${lstr} no dynamic 0.0.0.0 peer found"
         fi
         
         # log results to syslog
