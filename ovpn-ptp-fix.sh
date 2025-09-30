@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # script for UXG platform dynamic openvpn
 # 2025-01-14 github.com/rjadams82/unifi-nextgen-openvpn
 #
