@@ -69,7 +69,7 @@ cp "$stagedir/$fscriptdst" "$installdir/$fscriptdst"
 chmod 0755 "$installdir/$fscriptdst"
 
 # add cron entry to run this at regular intervals
-cronadd="#!/bin/sh
+cronadd="#!/bin/bash
 echo \"\$(date) \$(ps -o comm= \$PPID) called ovpn-ptp-fix\" >> /var/log/ovpn-ptp-fix.log 2>&1
 /data/custom/ovpn-ptp-fix/ovpn-ptp-fix.sh >> /var/log/ovpn-ptp-fix.log 2>&1
 "
