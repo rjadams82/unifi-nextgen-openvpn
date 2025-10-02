@@ -31,8 +31,11 @@ cfgexp='peer.config.*'                  # config file pattern to match
 # logger function
 log_it() {
     local priority="$1"
-    local message="$2"    
-    source /usr/bin/logger --id=$$ -t "${logtag}" -p "${priority}" -- "${message}"
+    local message="$2"
+    # output to STDIN
+    echo ${message}
+    # log to journal
+    source /usr/bin/logger --id=$$ -t "${logtag}" -p "${priority}" -- "${message}"    
 }
 # main script
 log_it 6 'start script'
