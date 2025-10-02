@@ -70,7 +70,7 @@ chmod 0755 "$installdir/$fscriptdst"
 
 # add cron entry to run this at regular intervals
 cronadd="#!/bin/bash
-echo \"\$(date) \$(ps -o comm= \$PPID) \$PPID called \$(ps -o comm= \$\$) \$\$\" >> /var/log/ovpn-ptp-fix.log 2>&1
+echo \"\$(date) \$(ps -o comm= \$PPID)[\$PPID] called \$(ps -o comm= \$\$)[\$\$]\" >> /var/log/ovpn-ptp-fix.log 2>&1
 /data/custom/ovpn-ptp-fix/ovpn-ptp-fix.sh >> /var/log/ovpn-ptp-fix.log 2>&1
 "
 
