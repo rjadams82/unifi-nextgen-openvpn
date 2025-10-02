@@ -15,7 +15,7 @@ This is useful for remote endpoints such as 5G/LTE modems or routing devices con
 1. First you would setup OpenVPN site-to-site VPN connection(s) in Unifi Application. (Since the remote endpoint may be behind CGNAT (LTE modem) or might have a DHCP WAN address, you would enter 0.0.0.0 as the "Remote IP Address".)
 2. Next a task runs (calling the fix script) at regular intervals (using cron) to parse the configured site-to-site connections; if they have a Remote IP Address of "0.0.0.0" the fix adds the --float option and comments out the --remote option.
 3. Then for any site-to-site config the fix has modified, it grabs the PID and kills the process, which automatically restarts (watchdog) with the updated config (--float #--remote).
-4. Finally the fix will log any actions to syslog. You can search for these log entries using "journalctl -t ovpn-ptp-fix".
+4. Finally the fix will log any actions to "/var/log/ovpn-ptp-fix.log".
 
 ## Install the fix by running the installer from this repo
 *installer is under development. run at your own risk.*
