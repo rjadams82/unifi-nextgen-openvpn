@@ -40,9 +40,9 @@ log_it() {
 # main script
 log_it 6 'start script'
 #if [ $(ls -1 $cfgdir$cfgexp | wc -l) -gt 0 ]; then
-if [ $(find $cfgdir -path "*/${cfgexp}" | wc -l) -gt 0 ]; then
+if [ "$(find "$cfgdir" -path "*/${cfgexp}" | wc -l)" -gt 0 ]; then
     # found the file(s)
-    for file in $cfgdir$cfgexp; do
+    for file in $(find "$cfgdir" -path "*/${cfgexp}"); do
         scount=0
         odir="$(dirname $file)"
         opid=$(<"${odir}/peer.pid")
