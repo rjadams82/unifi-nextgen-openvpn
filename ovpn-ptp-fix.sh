@@ -21,8 +21,8 @@ trap 'handle_error $LINENO $?' ERR
 #
 # configure variables
 logtag='ovpn-ptp-fix'                   # tag to prepend in syslog entry for easy searching - "journalctl -t ovpn-ptp-fix"
-cfgdir='/etc/openvpn/openvpn-peer-*/'   # root directory for config files
-cfgexp='peer.config.*'                  # config file pattern to match
+cfgdir='/etc/openvpn/'   # root directory for config files
+cfgexp='openvpn-peer-*/peer.config.*'                  # config file pattern to match
 #cfgdir='/home/'                        # testing
 #cfgexp='test.config'                   # testing
 #
@@ -39,7 +39,8 @@ log_it() {
 }
 # main script
 log_it 6 'start script'
-if [ $(ls -1 $cfgdir$cfgexp | wc -l) -gt 0 ]; then
+#if [ $(ls -1 $cfgdir$cfgexp | wc -l) -gt 0 ]; then
+if [ $(find $cfgdir -path "*/${cfgexp}" | wc -l) -gt 0 ]; then
     # found the file(s)
     for file in $cfgdir$cfgexp; do
         scount=0
