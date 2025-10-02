@@ -27,7 +27,15 @@ cfgexp='peer.config.*'                  # config file pattern to match
 #cfgexp='test.config'                   # testing
 #
 # NO MORE EDITS BELOW #
-/usr/bin/logger -t "$logtag" -p 6 -- 'start script'
+
+# logger function
+log_it() {
+    local facility="$1"
+    local message="$2"    
+    /usr/bin/logger -t "${logtag}" -p "${facility}" -- "${message}"
+}
+# main script
+log_it 6 'start script'
 if [ $(ls -1 $cfgdir$cfgexp | wc -l) -gt 0 ]; then
     # found the file(s)
     for file in $cfgdir$cfgexp; do
@@ -83,14 +91,14 @@ if [ $(ls -1 $cfgdir$cfgexp | wc -l) -gt 0 ]; then
         # log results to syslog
         if  [ $scount -gt 0 ]; then
             # log notice because action taken
-            /usr/bin/logger -t "$logtag" -p 5 -- "$lstr"
+            log_it 5 "$lstr"
         else
             # log info because no action taken
-            /usr/bin/logger -t "$logtag" -p 6 -- "$lstr"
+            log_it 6 "$lstr"
         fi
     done
 else
-    /usr/bin/logger -t "$logtag" -p 6 -- 'no config files found'
+    log_it 6 'no config files found'
 fi
-/usr/bin/logger -t "$logtag" -p 6 -- 'finish script'
+log_it 6 'finish script'
 exit 0
