@@ -35,7 +35,7 @@ log_it() {
     # output to STDIN
     echo ${message}
     # log to journal
-    source /usr/bin/logger --id=$$ -t "${logtag}" -p "${priority}" -- "${message}"    
+    /usr/bin/logger --id=$$ -t "${logtag}" -p "${priority}" -- "${message}"    
 }
 # main script
 log_it 6 'start script'
