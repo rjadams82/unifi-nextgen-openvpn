@@ -30,9 +30,9 @@ cfgexp='peer.config.*'                  # config file pattern to match
 
 # logger function
 log_it() {
-    local facility="$1"
+    local priority="$1"
     local message="$2"    
-    /usr/bin/logger --id=$$ -t "${logtag}" -p "${facility}" -- "${message}"
+    /usr/bin/logger --id=$$ -t "${logtag}" -p "${priority}" -- "${message}"
 }
 # main script
 log_it 6 'start script'
@@ -91,10 +91,10 @@ if [ $(ls -1 $cfgdir$cfgexp | wc -l) -gt 0 ]; then
         # log results to syslog
         if  [ $scount -gt 0 ]; then
             # log notice because action taken
-            log_it 5 "$lstr"
+            log_it "user.notice" "$lstr"
         else
             # log info because no action taken
-            log_it 6 "$lstr"
+            log_it "user.info" "$lstr"
         fi
     done
 else
