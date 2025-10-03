@@ -34,7 +34,7 @@ log_it() {
     local message="$2"
     # output to STDIN
     echo ${message}
-    # log to journal
+    # log to journal # this is unreliable on this platform
     /usr/bin/logger --id=$$ -t "${logtag}" -p "${priority}" -- "${message}"    
 }
 # main script
