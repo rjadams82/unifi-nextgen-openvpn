@@ -20,9 +20,9 @@ handle_error() {
 trap 'handle_error $LINENO $?' ERR
 #
 # configure variables
-logtag='ovpn-ptp-fix'                   # tag to prepend in syslog entry for easy searching - "journalctl -t ovpn-ptp-fix"
-cfgdir='/etc/openvpn/'   # root directory for config files
-cfgexp='openvpn-peer-*/peer.config.*'                  # config file pattern to match
+logtag='ovpn-ptp-fix'                    # tag to prepend in syslog entry for easy searching - "journalctl -t ovpn-ptp-fix"
+cfgdir='/etc/openvpn/'                   # root directory for config files
+cfgexp='openvpn-peer-*/peer.config.*'    # config file pattern to match
 #cfgdir='/home/'                        # testing
 #cfgexp='test.config'                   # testing
 #
@@ -34,8 +34,10 @@ log_it() {
     local message="$2"
     # output to STDIN
     echo ${message}
-    # log to journal # this is unreliable on this platform
-    /usr/bin/logger --id=$$ -t "${logtag}" -p "${priority}" -- "${message}"    
+    # log to journal 
+    # this is unreliable on this platform becuase the cron service is set to log only warnings or higher!
+    # refer to /lib/systemd/system/cron.service.d/loglevel.conf
+    # /usr/bin/logger --id=$$ -t "${logtag}" -p "${priority}" -- "${message}"    
 }
 # main script
 log_it 6 'start script'
