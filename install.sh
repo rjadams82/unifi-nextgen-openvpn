@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # installer script for UXG platform dynamic openvpn ptp fix
-# 2025-01-14 github.com/rjadams82/unifi-nextgen-openvpn
+# github.com/rjadams82/unifi-nextgen-openvpn
 # run this install with "curl -L https://raw.githubusercontent.com/rjadams82/unifi-nextgen-openvpn/main/install.sh | bash"
 # or "bash <(curl --silent https://raw.githubusercontent.com/rjadams82/unifi-nextgen-openvpn/main/install.sh)"
 #
@@ -12,7 +12,7 @@
 # and should not run this script without understanding the risk.
 #
 set -e; # safe exit on any failure
-clear -x
+clear -x # clear terminal
 # Disclaimer
 echo "";
 echo "";
@@ -32,10 +32,8 @@ if [[ $EUID -ne 0 ]]; then
   exit 1
 fi
 echo ""
-read -p "Please READ CAREFULLY then press any key to continue... OR CTRL+C to EXIT NOW..."
+read -p "Please READ CAREFULLY then press any key to continue... OR CTRL+C to EXIT NOW..." < /dev/tty
 
-echo ""
-echo ""
 # setup variables
 homedir=$HOME
 stagedir="$homedir/ovpn-ptp-fix/"
@@ -43,15 +41,14 @@ installdir='/data/custom/ovpn-ptp-fix/'
 giturl='https://raw.githubusercontent.com/rjadams82/unifi-nextgen-openvpn/dev/'
 fscriptsrc='ovpn-ptp-fix.sh'    # source script
 fscriptdst='ovpn-ptp-fix.sh'    # destination script
-fcron='/etc/cron.d/ovpn-ptp-fix'    # cron entry
+fcron='/etc/cron.hourly/ovpn-ptp-fix'    # cron entry
 flog='/var/log/ovpn-ptp-fix.log'    # log file
+flogrotate='/etc/logrotate.d/ovpn-ptp-fix'  # log file rotate conf
 
 echo ""
 echo "Default installation directory: $installdir"
 echo "To complete installation of 'ovpn-ptp-fix' ";
-read -p "Press any key to continue... OR CTRL+C to EXIT NOW..."
-
-echo ""
+read -p "Press any key to continue... OR CTRL+C to EXIT NOW..." < /dev/tty
 echo ""
 
 #cd "$homedir"
@@ -69,23 +66,44 @@ curl -L $giturl/$fscriptsrc > "$stagedir/$fscriptdst"
 cp "$stagedir/$fscriptdst" "$installdir/$fscriptdst"
 
 # make executable
-chmod 755 "$installdir/$fscriptdst"
+chmod 0755 "$installdir/$fscriptdst"
 
 # add cron entry to run this at regular intervals
-cronadd="# cron task for ovpn-ptp-fix script located in $installdir
-# run ovpn-ptp-fix.sh every 5 minutes to check for dynamic openvpn ptp configurations
-*/5 * * * * root $installdir$fscriptdst >> /var/log/ovpn-ptp-fix.log 2>&1
+cronadd="#!/bin/bash
+echo \"\$(date) \$(ps -o comm= \$PPID)[\$PPID] called \$(ps -o comm= \$\$)[\$\$]\" >> /var/log/ovpn-ptp-fix.log 2>&1
+source /data/custom/ovpn-ptp-fix/ovpn-ptp-fix.sh >> /var/log/ovpn-ptp-fix.log 2>&1
 "
+
 echo "$cronadd" > $fcron
+
+# make executable
+chmod 0755 $fcron
+
+# add logrotate conf to manage the cron logfile
+logrotate="/var/log/ovpn-ptp-fix.log {
+    rotate 4
+    size 256K
+    missingok
+    notifempty
+    compress
+    delaycompress
+    nocreate
+}
+"
+echo "$logrotate" > $flogrotate
+
+# restart cron now?
+systemctl restart cron
 
 # Post-installation message
 echo ""
 echo "script installation complete!"
 echo ""
 echo "ovpn-ptp-fix script has been installed in $installdir"
-echo "fix has been added to cron and will run at 5 minute intervals"
+echo "fix has been added to cron and will run at regular intervals"
 echo "you can also run it manually using: '$installdir/$fscriptdst'"
 echo ""
+echo "to see dedicated cron script log check '$flog'"
 echo "to review script results check syslog with 'journalctl -t ovpn-ptp-fix'"
 echo ""
 echo "please refer to documentation for any other information."
