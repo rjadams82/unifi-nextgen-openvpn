@@ -70,6 +70,7 @@ cp "$stagedir/$fscriptdst" "$installdir/$fscriptdst"
 
 # make executable
 chmod 0755 "$installdir/$fscriptdst"
+chmod 0755 "$stagedir/$fscriptcln"
 
 # add cron entry to run this at regular intervals
 cronadd="#!/bin/bash
