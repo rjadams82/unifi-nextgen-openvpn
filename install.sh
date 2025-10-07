@@ -40,8 +40,9 @@ stagedir="$homedir/ovpn-ptp-fix/"
 installdir='/data/custom/ovpn-ptp-fix/'
 giturl='https://raw.githubusercontent.com/rjadams82/unifi-nextgen-openvpn/dev/' # dev repo
 # giturl='https://raw.githubusercontent.com/rjadams82/unifi-nextgen-openvpn/main/' # prod repo
-fscriptsrc='ovpn-ptp-fix.sh'    # source script
-fscriptdst='ovpn-ptp-fix.sh'    # destination script
+fscriptsrc='ovpn-ptp-fix.sh'   # source script
+fscriptdst='ovpn-ptp-fix.sh'   # destination script
+fscriptcln='cleanup.sh'        # cleanup script
 fcron='/etc/cron.hourly/ovpn-ptp-fix'    # cron entry
 flog='/var/log/ovpn-ptp-fix.log'    # log file
 flogrotate='/etc/logrotate.d/ovpn-ptp-fix'  # log file rotate conf
@@ -60,10 +61,11 @@ mkdir -p $stagedir
 # where we will put our production custom fix
 mkdir -p $installdir
 
-# pull down asset to staging
+# pull down assets to staging
 curl -L $giturl/$fscriptsrc > "$stagedir/$fscriptdst"
+curl -L $giturl/$fscriptcln > "$stagedir/$fscriptcln"
 
-# move to install dir
+# copy script to working dir
 cp "$stagedir/$fscriptdst" "$installdir/$fscriptdst"
 
 # make executable
