@@ -38,7 +38,8 @@ read -p "Please READ CAREFULLY then press any key to continue... OR CTRL+C to EX
 homedir=$HOME
 stagedir="$homedir/ovpn-ptp-fix/"
 installdir='/data/custom/ovpn-ptp-fix/'
-giturl='https://raw.githubusercontent.com/rjadams82/unifi-nextgen-openvpn/dev/'
+giturl='https://raw.githubusercontent.com/rjadams82/unifi-nextgen-openvpn/dev/' # dev repo
+# giturl='https://raw.githubusercontent.com/rjadams82/unifi-nextgen-openvpn/main/' # prod repo
 fscriptsrc='ovpn-ptp-fix.sh'    # source script
 fscriptdst='ovpn-ptp-fix.sh'    # destination script
 fcron='/etc/cron.hourly/ovpn-ptp-fix'    # cron entry
