@@ -1,7 +1,7 @@
 # unifi-nextgen-openvpn
 ## Setup unifi next-gen gateway openvpn site to site with dynamic remote IP
 
-> These scripts are under development. If you accept the risk you can install or run the script manually to evaluate results. Feedback is welcome. 
+> These scripts are under development. If you accept the risk you can install with the install script or alternatively you may run just the the fix script manually to evaluate/test the results. Feedback is welcome.
 
 ## What this is for
 Setting up OpenVPN site-to-site connections in Unifi requires static IP on the remote site, as the Unifi Network Application does not allow you to setup a site-to-site connection without a Remote IP address.
