@@ -27,12 +27,23 @@ The fix script will be automatically installed and ran from /data/custom/ - this
 curl -L https://raw.githubusercontent.com/rjadams82/unifi-nextgen-openvpn/main/install.sh | bash
 ```
 
-## Run the fix script manually (for testing)
-if you just want to test the fix script without installing, or need to debug, use this option.
+*At this time we use a cron entry in "/etc/cron.hourly" to call the fix script every hour.*
 
-upload the fix script to the device somewhere like "/root/ovpn-ptp-fix.sh" using SCP or other file transfer tool
+if you want to manually trigger a run, you can use run-parts to emulate a cron execution 
+```
+run-parts /etc/cron.hourly/
+```
+or you can call the script directly
+```
+/data/custom/ovpn-ptp-fix/ovpn-ptp-fix.sh
+``` 
 
-make the script executable then run the script
+## No Install: Just run the fix script (for testing or one time use)
+if you just want to test/run the fix script without installing, or need to debug, use this option
+
+put the fix script on the device somewhere like "/root/ovpn-ptp-fix.sh" using SCP or other file transfer tool
+
+make the script executable then run the script as needed
 ```
 cd /root/
 chmod 755 ovpn-ptp-fix.sh
