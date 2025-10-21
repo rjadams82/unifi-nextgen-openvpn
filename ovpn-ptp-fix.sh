@@ -67,7 +67,7 @@ if [ "$(find "$cfgdir" -path "*/${cfgexp}" | wc -l)" -gt 0 ]; then
             if ! grep -q -- "--float" "$file"; then
                 # add the --float option for dynamic peer
                 echo '--float' >> $file
-                ((scount++))
+                scount=$((scount + 1))
                 lstr="${lstr} | add --float"
             else
                 # float already there
@@ -78,7 +78,7 @@ if [ "$(find "$cfgdir" -path "*/${cfgexp}" | wc -l)" -gt 0 ]; then
             if ! grep -q -- "#--remote 0.0.0.0" "$file"; then
                 # no commented --remote directive, we must comment it out
                 sed -i -e "s/--remote 0.0.0.0/#--remote 0.0.0.0/g" "$file"
-                ((scount++))
+                scount=$((scount + 1))
                 lstr="${lstr} | comment --remote"
             else
                 # remote already commented
