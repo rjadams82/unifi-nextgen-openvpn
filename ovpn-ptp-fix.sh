@@ -32,7 +32,7 @@ cfgexp='openvpn-peer-*/peer.config.*'    # config file pattern to match
 log_it() {
     local priority="$1"
     local message="$2"
-    # output to STDIN
+    # output to STDOUT
     echo ${message}
     # log to journal 
     # this is unreliable on this platform becuase the cron service is set to log only warnings or higher!
@@ -46,12 +46,19 @@ if [ "$(find "$cfgdir" -path "*/${cfgexp}" | wc -l)" -gt 0 ]; then
     # found the file(s)
     for file in $(find "$cfgdir" -path "*/${cfgexp}"); do
         scount=0
-        odir="$(dirname $file)"
-        opid=$(<"${odir}/peer.pid")
-        if [ -z "$opid" ]; then
-            # no pid assigned so peer is not running
+        odir="$(dirname $file)"        
+        # check for peer.pid file
+        if [ ! -f "${odir}/peer.pid" ]; then
+            # no pid file exists yet
             opid="[stopped]"
-        fi
+        else
+            # read the pid from file
+            opid=$(<"${odir}/peer.pid")
+            if [ -z "$opid" ]; then
+                # pid file otherwise empty so peer is not running
+                opid="[stopped]"
+            fi
+        fi        
         lstr="$odir pid:$opid"
         # check for remote 0.0.0.0
         if grep -q "remote 0.0.0.0" "$file"; then
@@ -60,7 +67,7 @@ if [ "$(find "$cfgdir" -path "*/${cfgexp}" | wc -l)" -gt 0 ]; then
             if ! grep -q -- "--float" "$file"; then
                 # add the --float option for dynamic peer
                 echo '--float' >> $file
-                ((scount++))
+                scount=$((scount + 1))
                 lstr="${lstr} | add --float"
             else
                 # float already there
@@ -71,7 +78,7 @@ if [ "$(find "$cfgdir" -path "*/${cfgexp}" | wc -l)" -gt 0 ]; then
             if ! grep -q -- "#--remote 0.0.0.0" "$file"; then
                 # no commented --remote directive, we must comment it out
                 sed -i -e "s/--remote 0.0.0.0/#--remote 0.0.0.0/g" "$file"
-                ((scount++))
+                scount=$((scount + 1))
                 lstr="${lstr} | comment --remote"
             else
                 # remote already commented

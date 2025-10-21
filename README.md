@@ -1,7 +1,7 @@
 # unifi-nextgen-openvpn
 ## Setup unifi next-gen gateway openvpn site to site with dynamic remote IP
 
-> These scripts are under development. If you accept the risk you can install or run the script manually to evaluate results. Feedback is welcome. 
+> These scripts are under development. If you accept the risk you can install with the install script or alternatively you may run just the the fix script manually to evaluate/test the results. Feedback is welcome.
 
 ## What this is for
 Setting up OpenVPN site-to-site connections in Unifi requires static IP on the remote site, as the Unifi Network Application does not allow you to setup a site-to-site connection without a Remote IP address.
@@ -27,12 +27,23 @@ The fix script will be automatically installed and ran from /data/custom/ - this
 curl -L https://raw.githubusercontent.com/rjadams82/unifi-nextgen-openvpn/main/install.sh | bash
 ```
 
-## Run the fix script manually (for testing)
-if you just want to test the fix script without installing, or need to debug, use this option.
+*At this time we use a cron entry in "/etc/cron.hourly" to call the fix script every hour.*
 
-upload the fix script to the device somewhere like "/root/ovpn-ptp-fix.sh" using SCP or other file transfer tool
+if you want to manually trigger a run, you can use run-parts to emulate a cron execution 
+```
+run-parts /etc/cron.hourly/
+```
+or you can call the script directly
+```
+/data/custom/ovpn-ptp-fix/ovpn-ptp-fix.sh
+``` 
 
-make the script executable then run the script
+## No Install: Just run the fix script (for testing or one time use)
+if you just want to test/run the fix script without installing, or need to debug, use this option
+
+put the fix script on the device somewhere like "/root/ovpn-ptp-fix.sh" using SCP or other file transfer tool
+
+make the script executable then run the script as needed
 ```
 cd /root/
 chmod 755 ovpn-ptp-fix.sh

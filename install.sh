@@ -38,9 +38,11 @@ read -p "Please READ CAREFULLY then press any key to continue... OR CTRL+C to EX
 homedir=$HOME
 stagedir="$homedir/ovpn-ptp-fix/"
 installdir='/data/custom/ovpn-ptp-fix/'
-giturl='https://raw.githubusercontent.com/rjadams82/unifi-nextgen-openvpn/dev/'
-fscriptsrc='ovpn-ptp-fix.sh'    # source script
-fscriptdst='ovpn-ptp-fix.sh'    # destination script
+giturl='https://raw.githubusercontent.com/rjadams82/unifi-nextgen-openvpn/dev/' # dev repo
+# giturl='https://raw.githubusercontent.com/rjadams82/unifi-nextgen-openvpn/main/' # prod repo
+fscriptsrc='ovpn-ptp-fix.sh'   # source script
+fscriptdst='ovpn-ptp-fix.sh'   # destination script
+fscriptcln='cleanup.sh'        # cleanup script
 fcron='/etc/cron.hourly/ovpn-ptp-fix'    # cron entry
 flog='/var/log/ovpn-ptp-fix.log'    # log file
 flogrotate='/etc/logrotate.d/ovpn-ptp-fix'  # log file rotate conf
@@ -59,19 +61,21 @@ mkdir -p $stagedir
 # where we will put our production custom fix
 mkdir -p $installdir
 
-# pull down asset to staging
+# pull down assets to staging
 curl -L $giturl/$fscriptsrc > "$stagedir/$fscriptdst"
+curl -L $giturl/$fscriptcln > "$stagedir/$fscriptcln"
 
-# move to install dir
+# copy script to working dir
 cp "$stagedir/$fscriptdst" "$installdir/$fscriptdst"
 
 # make executable
 chmod 0755 "$installdir/$fscriptdst"
+chmod 0755 "$stagedir/$fscriptcln"
 
 # add cron entry to run this at regular intervals
 cronadd="#!/bin/bash
 echo \"\$(date) \$(ps -o comm= \$PPID)[\$PPID] called \$(ps -o comm= \$\$)[\$\$]\" >> /var/log/ovpn-ptp-fix.log 2>&1
-source /data/custom/ovpn-ptp-fix/ovpn-ptp-fix.sh >> /var/log/ovpn-ptp-fix.log 2>&1
+/data/custom/ovpn-ptp-fix/ovpn-ptp-fix.sh >> /var/log/ovpn-ptp-fix.log 2>&1
 "
 
 echo "$cronadd" > $fcron
@@ -101,7 +105,7 @@ echo "script installation complete!"
 echo ""
 echo "ovpn-ptp-fix script has been installed in $installdir"
 echo "fix has been added to cron and will run at regular intervals"
-echo "you can also run it manually using: '$installdir/$fscriptdst'"
+echo "you can also run it manually using: '$installdir$fscriptdst'"
 echo ""
 echo "to see dedicated cron script log check '$flog'"
 echo "to review script results check syslog with 'journalctl -t ovpn-ptp-fix'"
