@@ -46,12 +46,19 @@ if [ "$(find "$cfgdir" -path "*/${cfgexp}" | wc -l)" -gt 0 ]; then
     # found the file(s)
     for file in $(find "$cfgdir" -path "*/${cfgexp}"); do
         scount=0
-        odir="$(dirname $file)"
-        opid=$(<"${odir}/peer.pid")
-        if [ -z "$opid" ]; then
-            # no pid assigned so peer is not running
+        odir="$(dirname $file)"        
+        # check for peer.pid file
+        if [ ! -f "${odir}/peer.pid" ]; then
+            # no pid file exists yet
             opid="[stopped]"
-        fi
+        else
+            # read the pid from file
+            opid=$(<"${odir}/peer.pid")
+            if [ -z "$opid" ]; then
+                # pid file otherwise empty so peer is not running
+                opid="[stopped]"
+            fi
+        fi        
         lstr="$odir pid:$opid"
         # check for remote 0.0.0.0
         if grep -q "remote 0.0.0.0" "$file"; then
