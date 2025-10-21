@@ -32,7 +32,7 @@ cfgexp='openvpn-peer-*/peer.config.*'    # config file pattern to match
 log_it() {
     local priority="$1"
     local message="$2"
-    # output to STDIN
+    # output to STDOUT
     echo ${message}
     # log to journal 
     # this is unreliable on this platform becuase the cron service is set to log only warnings or higher!
